@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://kit.fontawesome.com/f6775d1129.js" crossorigin="anonymous"></script>
+  <link href="prj.css" rel="stylesheet" />
+  <title id="page-title">الفحص التقني</title>
+</head>
+<body>
+  <header>
+    <h1 id="title">الفحص التقني</h1>
+    <div class="buttons">
+      <button id="lang-btn">FR</button>
+      <button id="theme-btn"><i class="fa-solid fa-circle-half-stroke"></i></button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2 id="hero-title">أمن وراحة في فحص عربتك</h2>
+    <p id="hero-text">احجز موعدك، أدِ الأداء، وتوصل بالنتائج بسهولة تامة</p>
+    <button id="hero-btn">احجز الآن</button>
+  </section>
+
+  <section class="services">
+    <h3 id="services-title">خدماتنا</h3>
+    <div class="service-box">
+      <div class="service">
+        <h4 id="srv1">حجز موعد</h4>
+        <p id="srv1-txt">اختار الوقت والمكان المناسب لفحص سيارتك.</p>
+      </div>
+      <div class="service">
+        <h4 id="srv2">أداء إلكتروني</h4>
+        <p id="srv2-txt">أداء آمن وسريع عبر المنصة بدون تنقل.</p>
+      </div>
+      <div class="service">
+        <h4 id="srv3">نتائج رقمية</h4>
+        <p id="srv3-txt">توصلك النتائج مباشرة بعد الفحص في حسابك.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span id="footer-text">&copy; 2025 الفحص التقني - جميع الحقوق محفوظة</span>
+  </footer>
+
+  <script>
+    const themeBtn = document.getElementById("theme-btn");
+    const themeIcon = themeBtn.querySelector("i");
+
+    themeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+
+      if (document.body.classList.contains("dark-mode")) {
+        themeIcon.classList.remove("fa-circle-half-stroke");
+        themeIcon.classList.add("fa-sun");
+      } else {
+        themeIcon.classList.remove("fa-sun");
+        themeIcon.classList.add("fa-circle-half-stroke");
+      }
+    });
+
+    const langBtn = document.getElementById("lang-btn");
+    let currentLang = "ar";
+
+    const texts = {
+      ar: {
+        title: "الفحص التقني",
+        "page-title": "الفحص التقني",
+        "hero-title": "أمن وراحة في فحص عربتك",
+        "hero-text": "احجز موعدك، أدِ الأداء، وتوصل بالنتائج بسهولة تامة",
+        "hero-btn": "احجز الآن",
+        "services-title": "خدماتنا",
+        srv1: "حجز موعد",
+        "srv1-txt": "اختار الوقت والمكان المناسب لفحص سيارتك.",
+        srv2: "أداء إلكتروني",
+        "srv2-txt": "أداء آمن وسريع عبر المنصة بدون تنقل.",
+        srv3: "نتائج رقمية",
+        "srv3-txt": "توصلك النتائج مباشرة بعد الفحص في حسابك.",
+        "footer-text": "&copy; 2025 الفحص التقني - جميع الحقوق محفوظة"
+      },
+      fr: {
+        title: "Contrôle Technique",
+        "page-title": "Contrôle Technique",
+        "hero-title": "Sécurité et confort dans le contrôle de votre véhicule",
+        "hero-text": "Réservez, payez et recevez vos résultats facilement",
+        "hero-btn": "Réserver maintenant",
+        "services-title": "Nos Services",
+        srv1: "Prendre Rendez-vous",
+        "srv1-txt": "Choisissez l'heure et le lieu du contrôle.",
+        srv2: "Paiement en ligne",
+        "srv2-txt": "Paiement rapide et sécurisé via la plateforme.",
+        srv3: "Résultats numériques",
+        "srv3-txt": "Recevez vos résultats immédiatement dans votre compte.",
+        "footer-text": "&copy; 2025 Contrôle Technique - Tous droits réservés"
+      }
+    };
+
+    langBtn.addEventListener("click", () => {
+      currentLang = currentLang === "ar" ? "fr" : "ar";
+      langBtn.textContent = currentLang === "ar" ? "FR" : "AR";
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
+
+      const langTexts = texts[currentLang];
+      for (let id in langTexts) {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = langTexts[id];
+      }
+    });
+  </script>
+</body>
+</html>

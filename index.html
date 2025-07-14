@@ -1,113 +1,864 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script src="https://kit.fontawesome.com/f6775d1129.js" crossorigin="anonymous"></script>
-  <link href="prj.css" rel="stylesheet" />
-  <title id="page-title">الفحص التقني</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الفحص التقني - Technical Inspection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #f39c12;
+            --accent-color: #e74c3c;
+            --success-color: #28a745;
+            --text-color: #333;
+            --bg-color: #ffffff;
+            --light-bg: #f8f9fa;
+            --border-color: #e9ecef;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --text-color: #e9ecef;
+            --bg-color: #1a1a1a;
+            --light-bg: #2d2d2d;
+            --border-color: #404040;
+            --shadow: 0 2px 10px rgba(255,255,255,0.1);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            transition: var(--transition);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-color);
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        .nav-menu a:hover {
+            background: var(--light-bg);
+            color: var(--primary-color);
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .lang-switch, .theme-toggle {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-color);
+        }
+
+        .lang-switch:hover, .theme-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: var(--bg-color);
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: var(--transition);
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 0;
+            background: var(--light-bg);
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-color);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .feature-card p {
+            color: var(--text-color);
+            line-height: 1.8;
+        }
+
+        /* Booking Form */
+        .booking-form {
+            padding: 4rem 0;
+            background: var(--bg-color);
+        }
+
+        .booking-form h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+        }
+
+        .appointment-form {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--light-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .form-group label i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+            width: 20px;
+        }
+
+        [dir="rtl"] .form-group label i {
+            margin-right: 0;
+            margin-left: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .error-message {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .form-group.error input,
+        .form-group.error select {
+            border-color: var(--accent-color);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 90, 160, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .confirmation-message {
+            display: none;
+            text-align: center;
+            background: #d4edda;
+            color: #155724;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            border: 1px solid #c3e6cb;
+        }
+
+        .confirmation-message.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        .confirmation-message i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--success-color);
+        }
+
+        .confirmation-message h3 {
+            margin-bottom: 1rem;
+            color: #155724;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu .nav-menu {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .features h2, .booking-form h2 {
+                font-size: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-controls {
+                gap: 0.5rem;
+            }
+
+            .lang-switch, .theme-toggle {
+                padding: 0.3rem 0.8rem;
+                font-size: 0.9rem;
+            }
+
+            .appointment-form {
+                padding: 1.5rem;
+                margin: 0 1rem;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 0.8rem;
+            }
+
+            .submit-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* RTL Enhancements */
+        [dir="rtl"] .nav-menu {
+            margin-right: auto;
+        }
+
+        [dir="rtl"] .nav-controls {
+            margin-left: auto;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1 id="title">الفحص التقني</h1>
-    <div class="buttons">
-      <button id="lang-btn">FR</button>
-      <button id="theme-btn"><i class="fa-solid fa-circle-half-stroke"></i></button>
-    </div>
-  </header>
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">
+                <i class="fas fa-car"></i> الفحص التقني
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="#home" data-ar="الرئيسية" data-fr="Accueil">الرئيسية</a></li>
+                <li><a href="#services" data-ar="الخدمات" data-fr="Services">الخدمات</a></li>
+                <li><a href="#booking" data-ar="حجز موعد" data-fr="Réservation">حجز موعد</a></li>
+                <li><a href="#contact" data-ar="اتصل بنا" data-fr="Contact">اتصل بنا</a></li>
+            </ul>
+            
+            <div class="nav-controls">
+                <button class="lang-switch" onclick="toggleLanguage()">
+                    <i class="fas fa-globe"></i> AR/FR
+                </button>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
 
-  <section class="hero">
-    <h2 id="hero-title">أمن وراحة في فحص عربتك</h2>
-    <p id="hero-text">احجز موعدك، أدِ الأداء، وتوصل بالنتائج بسهولة تامة</p>
-    <button id="hero-btn">احجز الآن</button>
-  </section>
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
 
-  <section class="services">
-    <h3 id="services-title">خدماتنا</h3>
-    <div class="service-box">
-      <div class="service">
-        <h4 id="srv1">حجز موعد</h4>
-        <p id="srv1-txt">اختار الوقت والمكان المناسب لفحص سيارتك.</p>
-      </div>
-      <div class="service">
-        <h4 id="srv2">أداء إلكتروني</h4>
-        <p id="srv2-txt">أداء آمن وسريع عبر المنصة بدون تنقل.</p>
-      </div>
-      <div class="service">
-        <h4 id="srv3">نتائج رقمية</h4>
-        <p id="srv3-txt">توصلك النتائج مباشرة بعد الفحص في حسابك.</p>
-      </div>
-    </div>
-  </section>
+            <div class="mobile-menu" id="mobileMenu">
+                <ul class="nav-menu">
+                    <li><a href="#home" data-ar="الرئيسية" data-fr="Accueil">الرئيسية</a></li>
+                    <li><a href="#services" data-ar="الخدمات" data-fr="Services">الخدمات</a></li>
+                    <li><a href="#booking" data-ar="حجز موعد" data-fr="Réservation">حجز موعد</a></li>
+                    <li><a href="#contact" data-ar="اتصل بنا" data-fr="Contact">اتصل بنا</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
 
-  <footer>
-    <span id="footer-text">&copy; 2025 الفحص التقني - جميع الحقوق محفوظة</span>
-  </footer>
+    <main>
+        <section id="home" class="hero">
+            <div class="container">
+                <h1 data-ar="الفحص التقني للمركبات" data-fr="Contrôle Technique des Véhicules">الفحص التقني للمركبات</h1>
+                <p data-ar="منصة حديثة وآمنة لحجز مواعيد الفحص التقني، الأداء الإلكتروني، والحصول على تقارير مفصلة بسهولة وسرعة" data-fr="Plateforme moderne et sécurisée pour réserver des rendez-vous, paiement en ligne et recevoir des rapports détaillés facilement">منصة حديثة وآمنة لحجز مواعيد الفحص التقني، الأداء الإلكتروني، والحصول على تقارير مفصلة بسهولة وسرعة</p>
+                <a href="#booking" class="btn">
+                    <i class="fas fa-calendar-check"></i> 
+                    <span data-ar="احجز الآن" data-fr="Réserver maintenant">احجز الآن</span>
+                </a>
+            </div>
+        </section>
 
-  <script>
-    const themeBtn = document.getElementById("theme-btn");
-    const themeIcon = themeBtn.querySelector("i");
+        <section id="services" class="features">
+            <div class="container">
+                <h2 data-ar="خدماتنا" data-fr="Nos Services">خدماتنا</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h3 data-ar="حجز الموعد" data-fr="Réservation">حجز الموعد</h3>
+                        <p data-ar="احجز موعدك للفحص التقني بسهولة عبر الإنترنت واختر الوقت المناسب لك من بين المواعيد المتاحة" data-fr="Réservez votre rendez-vous pour le contrôle technique facilement en ligne et choisissez l'heure qui vous convient">احجز موعدك للفحص التقني بسهولة عبر الإنترنت واختر الوقت المناسب لك من بين المواعيد المتاحة</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h3 data-ar="الأداء الإلكتروني" data-fr="Paiement en ligne">الأداء الإلكتروني</h3>
+                        <p data-ar="ادفع رسوم الفحص التقني بأمان عبر الإنترنت باستخدام بطاقتك البنكية أو المحفظة الإلكترونية" data-fr="Payez les frais du contrôle technique en toute sécurité en ligne avec votre carte bancaire ou portefeuille électronique">ادفع رسوم الفحص التقني بأمان عبر الإنترنت باستخدام بطاقتك البنكية أو المحفظة الإلكترونية</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h3 data-ar="التوصل بنتائج الفحص" data-fr="Réception des résultats">التوصل بنتائج الفحص</h3>
+                        <p data-ar="احصل على تقرير الفحص التقني مباشرة في بريدك الإلكتروني أو قم بتحميله كملف PDF" data-fr="Recevez le rapport du contrôle technique directement dans votre email ou téléchargez-le en PDF">احصل على تقرير الفحص التقني مباشرة في بريدك الإلكتروني أو قم بتحميله كملف PDF</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    themeBtn.addEventListener("click", () => {
-      document.body.classList.toggle("dark-mode");
+        <section id="booking" class="booking-form">
+            <div class="container">
+                <h2 data-ar="حجز موعد الفحص التقني" data-fr="Réserver un rendez-vous">حجز موعد الفحص التقني</h2>
+                
+                <form id="appointmentForm" class="appointment-form">
+                    <div class="form-group">
+                        <label for="fullName">
+                            <i class="fas fa-user"></i>
+                            <span data-ar="الاسم الكامل" data-fr="Nom complet">الاسم الكامل</span>
+                        </label>
+                        <input type="text" id="fullName" name="fullName" required>
+                        <div class="error-message" id="fullNameError"></div>
+                    </div>
 
-      if (document.body.classList.contains("dark-mode")) {
-        themeIcon.classList.remove("fa-circle-half-stroke");
-        themeIcon.classList.add("fa-sun");
-      } else {
-        themeIcon.classList.remove("fa-sun");
-        themeIcon.classList.add("fa-circle-half-stroke");
+                    <div class="form-group">
+                        <label for="phone">
+                            <i class="fas fa-phone"></i>
+                            <span data-ar="رقم الهاتف" data-fr="Numéro de téléphone">رقم الهاتف</span>
+                        </label>
+                        <input type="tel" id="phone" name="phone" required>
+                        <div class="error-message" id="phoneError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i>
+                            <span data-ar="البريد الإلكتروني" data-fr="Email">البريد الإلكتروني</span>
+                        </label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="licensePlate">
+                            <i class="fas fa-car"></i>
+                            <span data-ar="رقم اللوحة" data-fr="Numéro d'immatriculation">رقم اللوحة</span>
+                        </label>
+                        <input type="text" id="licensePlate" name="licensePlate" required>
+                        <div class="error-message" id="licensePlateError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vehicleModel">
+                            <i class="fas fa-car-side"></i>
+                            <span data-ar="نوع وطراز السيارة" data-fr="Marque et modèle">نوع وطراز السيارة</span>
+                        </label>
+                        <input type="text" id="vehicleModel" name="vehicleModel" required>
+                        <div class="error-message" id="vehicleModelError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inspectionCenter">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span data-ar="مركز الفحص" data-fr="Centre d'inspection">مركز الفحص</span>
+                        </label>
+                        <select id="inspectionCenter" name="inspectionCenter" required>
+                            <option value="" data-ar="اختر مركز الفحص" data-fr="Choisir un centre">اختر مركز الفحص</option>
+                            <option value="casablanca" data-ar="الدار البيضاء - سيدي معروف" data-fr="Casablanca - Sidi Maarouf">الدار البيضاء - سيدي معروف</option>
+                            <option value="rabat" data-ar="الرباط - أكدال" data-fr="Rabat - Agdal">الرباط - أكدال</option>
+                            <option value="marrakech" data-ar="مراكش - جليز" data-fr="Marrakech - Guéliz">مراكش - جليز</option>
+                            <option value="fez" data-ar="فاس - طريق عين الشقف" data-fr="Fès - Route Ain Chkef">فاس - طريق عين الشقف</option>
+                            <option value="tangier" data-ar="طنجة - المغرب العربي" data-fr="Tanger - Maghreb Arabe">طنجة - المغرب العربي</option>
+                        </select>
+                        <div class="error-message" id="inspectionCenterError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointmentDate">
+                            <i class="fas fa-calendar"></i>
+                            <span data-ar="تاريخ الموعد" data-fr="Date du rendez-vous">تاريخ الموعد</span>
+                        </label>
+                        <input type="date" id="appointmentDate" name="appointmentDate" required>
+                        <div class="error-message" id="appointmentDateError"></div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-check"></i>
+                        <span data-ar="حجز الموعد" data-fr="Réserver">حجز الموعد</span>
+                    </button>
+                </form>
+
+                <div id="confirmationMessage" class="confirmation-message">
+                    <i class="fas fa-check-circle"></i>
+                    <h3 data-ar="تم حجز موعدك بنجاح!" data-fr="Votre rendez-vous a été réservé avec succès!">تم حجز موعدك بنجاح!</h3>
+                    <p data-ar="سيتم إرسال تأكيد الحجز إلى بريدك الإلكتروني" data-fr="Une confirmation de réservation sera envoyée à votre email">سيتم إرسال تأكيد الحجز إلى بريدك الإلكتروني</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p data-ar="© 2025 الفحص التقني. جميع الحقوق محفوظة." data-fr="© 2025 Contrôle Technique. Tous droits réservés.">&copy; 2025 الفحص التقني. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentLang = 'ar';
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.querySelector('.theme-toggle i');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeToggle.className = 'fas fa-moon';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.className = 'fas fa-sun';
+            }
+        }
+
+        // Language toggle functionality
+        function toggleLanguage() {
+            const html = document.documentElement;
+            const langButton = document.querySelector('.lang-switch');
+            
+            if (currentLang === 'ar') {
+                currentLang = 'fr';
+                html.setAttribute('lang', 'fr');
+                html.setAttribute('dir', 'ltr');
+                langButton.innerHTML = '<i class="fas fa-globe"></i> FR/AR';
+            } else {
+                currentLang = 'ar';
+                html.setAttribute('lang', 'ar');
+                html.setAttribute('dir', 'rtl');
+                langButton.innerHTML = '<i class="fas fa-globe"></i> AR/FR';
+            }
+            
+            updateLanguageContent();
+        }
+
+        function updateLanguageContent() {
+            const elements = document.querySelectorAll('[data-ar][data-fr]');
+            elements.forEach(element => {
+                const text = element.getAttribute(`data-${currentLang}`);
+                if (text) {
+                    element.textContent = text;
+                }
+            });
+
+            updateFormPlaceholders();
+            updateSelectOptions();
+        }
+
+        function updateFormPlaceholders() {
+            const placeholders = {
+                ar: {
+                    fullName: 'أدخل اسمك الكامل',
+                    phone: 'أدخل رقم الهاتف',
+                    email: 'أدخل بريدك الإلكتروني',
+                    licensePlate: 'أدخل رقم اللوحة',
+                    vehicleModel: 'أدخل نوع وطراز السيارة'
+                },
+                fr: {
+                    fullName: 'Entrez votre nom complet',
+                    phone: 'Entrez votre numéro de téléphone',
+                    email: 'Entrez votre email',
+                    licensePlate: 'Entrez le numéro d\'immatriculation',
+                    vehicleModel: 'Entrez la marque et le modèle'
+                }
+            };
+
+            Object.keys(placeholders[currentLang]).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.placeholder = placeholders[currentLang][key];
+                }
+            });
+        }
+
+        function updateSelectOptions() {
+            const selectElement = document.getElementById('inspectionCenter');
+            const options = selectElement.querySelectorAll('option');
+            
+            options.forEach(option => {
+                const text = option.getAttribute(`data-${currentLang}`);
+                if (text) {
+                    option.textContent = text;
+                }
+            });
+        }
+
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+                    const fields = ['fullName', 'phone', 'email', 'licensePlate', 'vehicleModel', 'inspectionCenter', 'appointmentDate'];
+        fields.forEach(field => {
+            const input = document.getElementById(field);
+            const error = document.getElementById(field + 'Error');
+            const value = input.value.trim();
+
+            if (!value) {
+                error.textContent = errorMessages[currentLang].required;
+                error.classList.add('show');
+                input.parentElement.classList.add('error');
+                isValid = false;
+            }
+
+            if (field === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                error.textContent = errorMessages[currentLang].invalidEmail;
+                error.classList.add('show');
+                input.parentElement.classList.add('error');
+                isValid = false;
+            }
+
+            if (field === 'phone' && value && !/^\d{8,15}$/.test(value)) {
+                error.textContent = errorMessages[currentLang].invalidPhone;
+                error.classList.add('show');
+                input.parentElement.classList.add('error');
+                isValid = false;
+            }
+
+            if (field === 'appointmentDate' && value) {
+                const today = new Date().toISOString().split('T')[0];
+                if (value < today) {
+                    error.textContent = errorMessages[currentLang].pastDate;
+                    error.classList.add('show');
+                    input.parentElement.classList.add('error');
+                    isValid = false;
+                }
+            }
+        });
+
+        return isValid;
+    }
+
+            
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(msg => {
+                msg.classList.remove('show');
+            });
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+
+            // Error messages
+            const errorMessages = {
+                ar: {
+                    required: 'هذا الحقل مطلوب',
+                    invalidEmail: 'البريد الإلكتروني غير صحيح',
+                    pastDate: 'لا يمكن حجز موعد في الماضي',
+                    invalidPhone: 'رقم الهاتف غير صحيح'
+                },
+                    fr: {
+        required: 'Ce champ est requis',
+        invalidEmail: 'Adresse e-mail invalide',
+        pastDate: 'Vous ne pouvez pas réserver une date passée',
+        invalidPhone: 'Numéro de téléphone invalide'
+    }
+    
+};
+   
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const name = document.getElementById('fullName').value;
+      const phone = document.getElementById('phone').value;
+      const email = document.getElementById('email').value;
+      const license = document.getElementById('licensePlate').value;
+      const model = document.getElementById('vehicleModel').value;
+      const center = document.getElementById('inspectionCenter').selectedOptions[0].textContent;
+      const date = document.getElementById('appointmentDate').value;
+
+      doc.text("تأكيد حجز الفحص التقني", 20, 20);
+      doc.text(`الاسم: ${name}`, 20, 30);
+      doc.text(`الهاتف: ${phone}`, 20, 40);
+      doc.text(`البريد: ${email}`, 20, 50);
+      doc.text(`رقم اللوحة: ${license}`, 20, 60);
+      doc.text(`نوع السيارة: ${model}`, 20, 70);
+      doc.text(`المركز: ${center}`, 20, 80);
+      doc.text(`التاريخ: ${date}`, 20, 90);
+
+      doc.save("confirmation.pdf");
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('theme');
+      const savedLang = localStorage.getItem('lang');
+      if (savedTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        document.querySelector('.theme-toggle i').className = 'fas fa-sun';
       }
+      if (savedLang === 'fr') {
+        currentLang = 'fr';
+        document.documentElement.setAttribute('lang', 'fr');
+        document.documentElement.setAttribute('dir', 'ltr');
+        document.querySelector('.lang-switch').innerHTML = '<i class="fas fa-globe"></i> FR/AR';
+      }
+      updateLanguageContent();
     });
-
-    const langBtn = document.getElementById("lang-btn");
-    let currentLang = "ar";
-
-    const texts = {
-      ar: {
-        title: "الفحص التقني",
-        "page-title": "الفحص التقني",
-        "hero-title": "أمن وراحة في فحص عربتك",
-        "hero-text": "احجز موعدك، أدِ الأداء، وتوصل بالنتائج بسهولة تامة",
-        "hero-btn": "احجز الآن",
-        "services-title": "خدماتنا",
-        srv1: "حجز موعد",
-        "srv1-txt": "اختار الوقت والمكان المناسب لفحص سيارتك.",
-        srv2: "أداء إلكتروني",
-        "srv2-txt": "أداء آمن وسريع عبر المنصة بدون تنقل.",
-        srv3: "نتائج رقمية",
-        "srv3-txt": "توصلك النتائج مباشرة بعد الفحص في حسابك.",
-        "footer-text": "&copy; 2025 الفحص التقني - جميع الحقوق محفوظة"
-      },
-      fr: {
-        title: "Contrôle Technique",
-        "page-title": "Contrôle Technique",
-        "hero-title": "Sécurité et confort dans le contrôle de votre véhicule",
-        "hero-text": "Réservez, payez et recevez vos résultats facilement",
-        "hero-btn": "Réserver maintenant",
-        "services-title": "Nos Services",
-        srv1: "Prendre Rendez-vous",
-        "srv1-txt": "Choisissez l'heure et le lieu du contrôle.",
-        srv2: "Paiement en ligne",
-        "srv2-txt": "Paiement rapide et sécurisé via la plateforme.",
-        srv3: "Résultats numériques",
-        "srv3-txt": "Recevez vos résultats immédiatement dans votre compte.",
-        "footer-text": "&copy; 2025 Contrôle Technique - Tous droits réservés"
-      }
-    };
-
-    langBtn.addEventListener("click", () => {
-      currentLang = currentLang === "ar" ? "fr" : "ar";
-      langBtn.textContent = currentLang === "ar" ? "FR" : "AR";
-      document.documentElement.lang = currentLang;
-      document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
-
-      const langTexts = texts[currentLang];
-      for (let id in langTexts) {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = langTexts[id];
-      }
-    });
-  </script>
-</body>
-</html>
+</script>
